@@ -50,7 +50,7 @@ const db = makeDb();
 
         const fetchBookListData = await db.query(fetchBooklistQuery);
         console.log("BOOKLIST USERID ", user);
-        console.log("BOOKLIST DATA ", fetchBookListData);
+        // console.log("BOOKLIST DATA ", fetchBookListData);
 
         return fetchBookListData;
     }

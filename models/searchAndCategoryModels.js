@@ -70,7 +70,7 @@ const fetchBookBySearchTextModel = async (userId, searchText) => {
         `;
 
         const fetchBookBySearchTextData = await db.query(fetchBookBySearchTextQuery, [userId]);
-        console.log("fetchBookBySearchTextData", fetchBookBySearchTextData);
+        // console.log("fetchBookBySearchTextData", fetchBookBySearchTextData);
         return fetchBookBySearchTextData;
     }
     catch (err) {
