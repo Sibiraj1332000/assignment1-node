@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const morgan = require('morgan')
 
 const authRouters = require('./routers/authRouters');
 const newsAndEventsRouter = require('./routers/newsAndEventRouters');
@@ -12,15 +13,16 @@ const searchAndCategoryRouter = require('./routers/searchAndCategoryRouters')
 
 const app = express();
 // app.use(cors());
-const logRequestStart = (req, res, next) => {
+// const logRequestStart = (req, res, next) => {
 
-    console.info(`REQUEST  ${req.method} ${req.originalUrl}`);
-    console.log("=======================================");
+//     console.info(`REQUEST  ${req.method} ${req.originalUrl}`);
 
-    next()
-}
+//     console.log("=======================================");
 
-app.use(logRequestStart)
+//     next()
+// }
+
+// app.use(logRequestStart)
 
 app.use((req, res, next) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -30,6 +32,7 @@ app.use((req, res, next) => {
     next();
 });
 
+app.use(morgan('dev'))
 app.use(express.json());
 
 app.use('/auth', authRouters);
