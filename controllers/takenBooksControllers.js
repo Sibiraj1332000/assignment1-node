@@ -31,5 +31,16 @@ const returnBookControler = async (req, res) => {
 
 }
 
+const takenBooksCountController = async(req,res)=>{
+    try {
+        const userId = req.query['userId'];
+        const bookCount = await booksTakenModel.takenBooksCountModel(userId);
 
-module.exports = { fetchTakenBooks, returnBookControler }
+        return res.json({ success: 'true', bookCount });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false })
+    }
+}
+
+module.exports = { fetchTakenBooks, returnBookControler,takenBooksCountController}

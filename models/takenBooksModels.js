@@ -21,9 +21,9 @@ const fetchTakenBooksQuery = `
 
 const fetchTakenBooksModel = async (user) => {
 
-const db = makeDb();
+    const db = makeDb();
     try {
-        
+
         const fetchTakenBooksData = await db.query(fetchTakenBooksQuery, [user]);
 
         return fetchTakenBooksData;
@@ -40,7 +40,7 @@ const db = makeDb();
 
 
 const returnBookModel = async (userId, bookId) => {
-    console.log("BOOK ID IN returnBookModel : ",bookId);
+    console.log("BOOK ID IN returnBookModel : ", bookId);
     const db = makeDb();
     try {
 
@@ -52,7 +52,7 @@ const returnBookModel = async (userId, bookId) => {
 
         await db.query(returnBookQuery);
         const getBookIdQuery = `SELECT book_details_id from books_taken WHERE id = ?`;
-        const getBookIdData = await db.query(getBookIdQuery,[bookId]);
+        const getBookIdData = await db.query(getBookIdQuery, [bookId]);
         // console.log("getBookIdData",getBookIdData[0].book_details_id);
 
         const increaseBookCountQuery = `
@@ -77,8 +77,26 @@ const returnBookModel = async (userId, bookId) => {
 
 }
 
+const takenBooksCountModel = async (userId) => {
+    const db = makeDb();
+    try {
+        const takenBooksCountQuery = `SELECT count(if(status='taken',id,null)) AS taken_count FROM books_taken WHERE user_details_id=?`;
+        const result = await db.query(takenBooksCountQuery,[userId]);
+        console.log(result[0].taken_count);
+        return result[0].taken_count;
+    }
+    catch (err) {
+        console.log("the error", err);
+        throw new Error("server Error");
+    }
+    finally {
+        await db.close();
+    }
+}
+
 
 module.exports = {
     fetchTakenBooksModel,
-    returnBookModel
+    returnBookModel,
+    takenBooksCountModel
 }
