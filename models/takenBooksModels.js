@@ -40,6 +40,7 @@ const db = makeDb();
 
 
 const returnBookModel = async (userId, bookId) => {
+    console.log("BOOK ID IN returnBookModel : ",bookId);
     const db = makeDb();
     try {
 
@@ -50,10 +51,13 @@ const returnBookModel = async (userId, bookId) => {
         `;
 
         await db.query(returnBookQuery);
+        const getBookIdQuery = `SELECT book_details_id from books_taken WHERE id = ?`;
+        const getBookIdData = await db.query(getBookIdQuery,[bookId]);
+        // console.log("getBookIdData",getBookIdData[0].book_details_id);
 
         const increaseBookCountQuery = `
             UPDATE book_details SET copies_remaining = (copies_remaining + 1)
-                WHERE id = ${bookId}
+                WHERE id = ${getBookIdData[0].book_details_id}
             `;
 
         await db.query(increaseBookCountQuery);
