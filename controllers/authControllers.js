@@ -76,18 +76,22 @@ const userLogin = async (req, res) => {
                 );
 
             }
+            
+            return res.json(
+                {
+                    result: result,
+                    accessKey: '',
+                    success: false
+                }
+            );
+
+
         }
         catch (err) {
             return res.status(500).json({ success: false })
         }
 
-        return res.json(
-            {
-                result: result,
-                accessKey: '',
-                success: false
-            }
-        );
+
     }
 
 }
