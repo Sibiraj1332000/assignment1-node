@@ -46,7 +46,7 @@ const returnBookModel = async (userId, bookId) => {
 
         console.log("ENTERED returnBookModel try");
         const returnBookQuery = `
-        UPDATE books_taken SET status = 'returned' 
+        UPDATE books_taken SET status = 'returned' ,return_date = current_timestamp()
         WHERE id = ${bookId} AND user_details_id = ${userId}
         `;
 
