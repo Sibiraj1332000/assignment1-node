@@ -1,10 +1,10 @@
 const makeDb = require('../library/db');
 
-const userListModel = async () => {
+const userListModel = async (orderDirection, valueToOrderBy) => {
     const db = makeDb();
     try {
-        const userListQuery = 'SELECT id as user_id,first_name,last_name,email,phone FROM user_details';
-        const userListData = db.query(userListQuery);
+        const userListQuery = `SELECT id as user_id,first_name,last_name,email,phone FROM user_details order by ${valueToOrderBy} ${orderDirection}`;
+        const userListData = await db.query(userListQuery);
         return userListData
     }
     catch (err) {
@@ -38,7 +38,7 @@ const fetchTakenBooksModel = async (userId) => {
             WHERE
                 books_taken.status = 'taken'
                     AND books_taken.user_details_id = ?`;
-        const fetchBookByStatusData = db.query(fetchBookByStatusQuery,[userId]);
+        const fetchBookByStatusData = db.query(fetchBookByStatusQuery, [userId]);
         return fetchBookByStatusData
     }
     catch (err) {
@@ -73,7 +73,7 @@ const fetchReturnedBooksModel = async (userId) => {
             WHERE
                 books_taken.status = 'returned'
                     AND books_taken.user_details_id = ? order by return_date desc`;
-        const fetchBookByStatusData = db.query(fetchBookByStatusQuery,[userId]);
+        const fetchBookByStatusData = db.query(fetchBookByStatusQuery, [userId]);
         return fetchBookByStatusData
     }
     catch (err) {

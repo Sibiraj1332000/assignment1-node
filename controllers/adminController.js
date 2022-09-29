@@ -3,7 +3,8 @@ const adminModel = require('../models/adminModel')
 
 const userListController = async (req, res) => {
     try {
-        const result = await adminModel.userListModel()
+        const { orderDirection, valueToOrderBy } = req.query;
+        const result = await adminModel.userListModel(orderDirection, valueToOrderBy)
 
         return res.json({ success: true, result });
     }
