@@ -100,9 +100,63 @@ const fetchReturnedBooksModel = async (userId) => {
 //     }
 // }
 
+const addBookModel = async (bookInfo) => {
+    const db = makeDb();
+    try {
+        // console.table(bookInfo);
+
+        const checkAutherExistsQuery = 'SELECT id from book_auther where name = ?';
+        const autherId = await db.query(checkAutherExistsQuery, [bookInfo.auther]);
+
+        const insertBookQuery = `INSERT INTO book_details 
+                    (book_name,auther_id,book_image,category_id,copies_remaining,price,language_id)
+                 VALUES
+                    (?,?,?,?,?,?,?)`;
+
+        if (autherId.length != 0) {
+            // console.log(autherId[0].id);
+            await db.query(insertBookQuery, [
+                bookInfo.bookName,
+                autherId[0].id,
+                bookInfo.imageName,
+                bookInfo.category,
+                bookInfo.copiesRemaining,
+                bookInfo.price,
+                bookInfo.language
+            ]);
+
+        }
+        else {
+            console.log("no");
+            const insertAutherQuery = 'INSERT INTO book_auther (name) values(?)'
+            const result = await db.query(insertAutherQuery, [bookInfo.auther]);
+            // console.log(result.insertId);
+            await db.query(insertBookQuery, [
+                bookInfo.bookName,
+                result.insertId,
+                bookInfo.imageName,
+                bookInfo.category,
+                bookInfo.copiesRemaining,
+                bookInfo.price,
+                bookInfo.language
+            ]);
+        }
+
+        return true
+    }
+    catch (err) {
+        console.log(err);
+        throw new Error("Internal error");
+    }
+    finally {
+        await db.close();
+    }
+}
+
 
 module.exports = {
     userListModel,
     fetchTakenBooksModel,
-    fetchReturnedBooksModel
+    fetchReturnedBooksModel,
+    addBookModel
 }
