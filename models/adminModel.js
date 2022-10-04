@@ -153,10 +153,140 @@ const addBookModel = async (bookInfo) => {
     }
 }
 
+const fetchBook = async () => {
+    const db = makeDb();
+    try {
+        const bookListQuery = `
+            SELECT 
+                book_details.id AS book_id,
+                book_details.book_name AS book_name,
+                book_auther.name AS auther,
+                languages.language AS language,
+                book_category.category AS category
+            FROM
+                book_details
+                    JOIN
+                book_auther ON book_details.auther_id = book_auther.id
+                    JOIN
+                book_category ON book_category.id = book_details.category_id
+                    JOIN
+                languages ON languages.id = book_details.language_id
+            where is_deleted=0
+                `;
+        const bookListData = await db.query(bookListQuery);
+        // console.log(bookListData);
+        return bookListData
+    }
+    catch (err) {
+        console.log(err);
+        throw new Error("Internal error");
+    }
+    finally {
+        await db.close();
+    }
+}
+const fetchOneBook = async (bookId) => {
+    const db = makeDb();
+    try {
+        const bookQuery = `
+            SELECT 
+                book_details.book_name AS book_name,
+                book_auther.name AS auther,
+                book_details.category_id AS category,
+                book_details.language_id AS language,
+                book_details.copies_remaining AS copies,
+                book_details.price AS price
+            FROM
+                book_details
+                    JOIN
+                book_auther ON book_auther.id = book_details.auther_id
+            WHERE
+                book_details.id = ?
+                `;
+        const bookListData = await db.query(bookQuery, [bookId]);
+        // console.log(bookListData);
+        return bookListData
+    }
+    catch (err) {
+        console.log(err);
+        throw new Error("Internal error");
+    }
+    finally {
+        await db.close();
+    }
+}
+
+const editBookModel = async (bookData) => {
+    const db = makeDb();
+    try {
+        const { language, price, copiesRemaining, category, auther, bookName, bookId } = bookData
+        console.log("HHHH_ ", language, price, copiesRemaining, category, auther, bookName, bookId);
+
+        const checkAutherExistsQuery = 'SELECT id from book_auther where name = ?';
+        const autherId = await db.query(checkAutherExistsQuery, [auther]);
+
+        const updateBookQuery = `
+            UPDATE book_details 
+            SET 
+                book_name = ?,
+                auther_id = ?,
+                category_id = ?,
+                copies_remaining = ?,
+                price = ?,
+                language_id = ?
+            WHERE
+                id = ?
+            `;
+
+        if (autherId.length != 0) {
+            await db.query(updateBookQuery,
+                [bookName, autherId[0].id, category, copiesRemaining, price, language, bookId])
+        }
+        else {
+            console.log("no");
+            const insertAutherQuery = 'INSERT INTO book_auther (name) values(?)'
+            const result = await db.query(insertAutherQuery, [auther]);
+            // console.log(result.insertId);
+            await db.query(updateBookQuery,
+                [bookName, result.insertId, category, copiesRemaining, price, language, bookId]);
+        }
+
+        return true;
+
+    }
+    catch (err) {
+        console.log(err);
+        throw new Error("Internal error");
+    }
+    finally {
+        await db.close();
+    }
+
+}
+
+const deleteBookModel = async (bookId) => {
+    const db = makeDb();
+    try {
+        console.log("bookId", bookId);
+        const deleteBookQuery = `UPDATE book_details set is_deleted=1 where id = ?`;
+        await db.query(deleteBookQuery, [bookId]);
+    }
+    catch (err) {
+        console.log(err);
+        throw new Error("Internal error");
+    }
+    finally {
+        await db.close();
+    }
+}
 
 module.exports = {
     userListModel,
     fetchTakenBooksModel,
     fetchReturnedBooksModel,
-    addBookModel
+    addBookModel,
+    fetchBook,
+    fetchOneBook,
+    editBookModel,
+    deleteBookModel
 }

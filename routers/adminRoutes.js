@@ -20,6 +20,12 @@ router.post(
     upload.single('bookImage'),
     fileErrorHandling,
     userListController.addBookController
-)
+);
+
+router.get('/book_list', authenticateTocken.authenticateTocken, userListController.fetchBookListController);
+router.get('/one_book', authenticateTocken.authenticateTocken, userListController.fetchOneBookControler);
+router.post('/edit_book', authenticateTocken.authenticateTocken, userListController.editBookControler);
+router.delete('/delete_book', authenticateTocken.authenticateTocken, userListController.deleteBookControler);
+
 
 module.exports = router;
