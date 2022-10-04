@@ -84,9 +84,58 @@ const addBookController = async (req, res) => {
 
 }
 
+const fetchBookListController = async (req, res) => {
+    try {
+        console.log("ENTERED fetchBookListController");
+        const result = await adminModel.fetchBook()
+        return res.json({ success: true, result });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false });
+    }
+}
+
+const fetchOneBookControler = async (req, res) => {
+    try {
+        console.log("ENTERED fetchBookListController", req.query.bookId);
+        const result = await adminModel.fetchOneBook(req.query.bookId)
+        return res.json({ success: true, result });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false });
+    }
+}
+const editBookControler = async (req, res) => {
+    try {
+        reqdata = req.body
+        // console.log(req.body);
+        // console.log("ENTERED fetchBookListController", req.query.bookId);
+        await adminModel.editBookModel(req.body)
+        return res.json({ success: true });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false });
+    }
+}
+
+const deleteBookControler = async (req, res) => {
+    try {
+        console.log(req.query.bookId);
+        adminModel.deleteBookModel(req.query.bookId)
+        return res.json({ success: true });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false });
+    }
+}
+
 module.exports = {
     userListController,
     fetchReturnedBooksController,
     fetchTakenBooksController,
-    addBookController
+    addBookController,
+    fetchBookListController,
+    fetchOneBookControler,
+    editBookControler,
+    deleteBookControler
 }
