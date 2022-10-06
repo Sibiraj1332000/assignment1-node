@@ -1,5 +1,5 @@
 const express = require('express');
-const { upload, fileErrorHandling, validateFormData } = require('../middleware/fileUploadMiddleware');
+const { upload, fileErrorHandling } = require('../middleware/fileUploadMiddleware');
 
 const router = express.Router();
 
@@ -24,7 +24,15 @@ router.post(
 
 router.get('/book_list', authenticateTocken.authenticateTocken, userListController.fetchBookListController);
 router.get('/one_book', authenticateTocken.authenticateTocken, userListController.fetchOneBookControler);
-router.post('/edit_book', authenticateTocken.authenticateTocken, userListController.editBookControler);
+
+router.post(
+    '/edit_book',
+    authenticateTocken.authenticateTocken,
+    upload.single('bookImage'),
+    fileErrorHandling,
+    userListController.editBookControler
+);
+
 router.delete('/delete_book', authenticateTocken.authenticateTocken, userListController.deleteBookControler);
 
 

@@ -39,6 +39,7 @@ const fetchReturnedBooksController = async (req, res) => {
 }
 
 const addBookController = async (req, res) => {
+
     // console.log("ggggg", err);
     // if (err instanceof multer.MulterError) {
     //     // A Multer error occurred when uploading.
@@ -84,6 +85,32 @@ const addBookController = async (req, res) => {
 
 }
 
+const editBookControler = async (req, res) => {
+
+    if (req.file) {
+        // return res.status(400).json("Image Not found");
+        const imageName = req.file.filename;
+        console.log("kjjjkjkjkkj", imageName);
+        const fileLocation = 'http://127.0.0.1:8080/' + imageName
+        req.body.fileLocation=fileLocation
+    }
+    console.log("THE FILE : ", req.body);
+
+
+
+    try {
+        // console.log("REQ BODY ",req.body.bookname);
+        reqdata = req.body
+        // console.log(req.body);
+        // console.log("ENTERED fetchBookListController", req.query.bookId);
+        await adminModel.editBookModel(req.body)
+        return res.json({ success: true });
+    }
+    catch (err) {
+        return res.status(500).json({ success: false });
+    }
+}
+
 const fetchBookListController = async (req, res) => {
     try {
         console.log("ENTERED fetchBookListController");
@@ -105,18 +132,7 @@ const fetchOneBookControler = async (req, res) => {
         return res.status(500).json({ success: false });
     }
 }
-const editBookControler = async (req, res) => {
-    try {
-        reqdata = req.body
-        // console.log(req.body);
-        // console.log("ENTERED fetchBookListController", req.query.bookId);
-        await adminModel.editBookModel(req.body)
-        return res.json({ success: true });
-    }
-    catch (err) {
-        return res.status(500).json({ success: false });
-    }
-}
+
 
 const deleteBookControler = async (req, res) => {
     try {

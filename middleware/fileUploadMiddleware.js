@@ -19,6 +19,7 @@ const storage = multer.diskStorage({
 const upload = multer({
     storage: storage,
     fileFilter: (req, file, cb) => {
+        console.log("ffff", req);
         console.log("jojo", file.originalname);
 
         var filetypes = /jpg|JPG|jpeg|''/;
@@ -43,7 +44,10 @@ const upload = multer({
 
 
 const fileErrorHandling = (err, req, res, next) => {
+    console.log("fileErrorHandling");
+
     console.log("THE ERROR", err);
+
 
     if (err == "file-type-error")
         return res.status(415).json("Invalied file type");
