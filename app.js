@@ -1,5 +1,7 @@
 const express = require('express');
-const morgan = require('morgan')
+const morgan = require('morgan');
+
+const config = require('./config/config')
 
 const authRouters = require('./routers/authRouters');
 const newsAndEventsRouter = require('./routers/newsAndEventRouters');
@@ -26,8 +28,8 @@ app.use('/news_and_events', newsAndEventsRouter);
 app.use('/book_list', bookListRouter);
 app.use('/books_taken', booksTakenRouter);
 app.use('/search', searchAndCategoryRouter);
-app.use('/admin',adminRoute);
+app.use('/admin', adminRoute);
 
-app.listen(3001, () => {
-    console.log("Running on port:3001 .....");
+app.listen(config.port, () => {
+    console.log(`Running on port:${config.port} .....`);
 });
