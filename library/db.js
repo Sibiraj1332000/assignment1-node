@@ -1,13 +1,17 @@
 const util = require('util');
 const mysql = require('mysql');
+
+const config = require('../config/config');
+
 const makeDb = () => {
-    const config = {
-        user: 'root',
-        host: 'localhost',
-        password: 'password',
-        database: 'library_database'
-    };
-    const connection = mysql.createConnection(config);
+   
+    const connection = mysql.createConnection({
+        user: config.user,
+        host: config.host,
+        password: config.password,
+        database: config.database
+    });
+
     return {
         query(sql, args) {
             return util.promisify(connection.query)
@@ -18,4 +22,5 @@ const makeDb = () => {
         }
     };
 }
+
 module.exports = makeDb;

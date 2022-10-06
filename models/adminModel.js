@@ -85,21 +85,6 @@ const fetchReturnedBooksModel = async (userId) => {
     }
 }
 
-// const demo = async () => {
-//     const db = makeDb();
-//     try {
-
-//         return true
-//     }
-//     catch (err) {
-//         console.log(err);
-//         throw new Error("Internal error");
-//     }
-//     finally {
-//         await db.close();
-//     }
-// }
-
 const addBookModel = async (bookInfo) => {
     const db = makeDb();
     try {
@@ -204,7 +189,6 @@ const fetchOneBook = async (bookId) => {
                 book_details.id = ?
                 `;
         const bookListData = await db.query(bookQuery, [bookId]);
-        // console.log(bookListData);
         return bookListData
     }
     catch (err) {
@@ -219,14 +203,20 @@ const fetchOneBook = async (bookId) => {
 const editBookModel = async (bookData) => {
     const db = makeDb();
     try {
-        const { language, price, copiesRemaining, category, auther, bookName, bookId } = bookData
-        console.log("HHHH_ ", language, price, copiesRemaining, category, auther, bookName, bookId);
+        const { language, price, copiesRemaining, category, auther, bookName, bookId, fileLocation } = bookData
+        console.log("HHHH_ ", language, price, copiesRemaining, category, auther, bookName, bookId, fileLocation);
 
         const checkAutherExistsQuery = 'SELECT id from book_auther where name = ?';
         const autherId = await db.query(checkAutherExistsQuery, [auther]);
 
-        const updateBookQuery = `
-            UPDATE book_details 
+        const updateBookQuery = fileLocation
+            ? `UPDATE book_details 
+            SET 
+                book_name = ?,auther_id = ?,category_id = ?,copies_remaining = ?,
+                price = ?,language_id = ?,book_image = ?
+            WHERE
+                id = ?`
+            : `UPDATE book_details 
             SET 
                 book_name = ?,
                 auther_id = ?,
@@ -240,15 +230,21 @@ const editBookModel = async (bookData) => {
 
         if (autherId.length != 0) {
             await db.query(updateBookQuery,
-                [bookName, autherId[0].id, category, copiesRemaining, price, language, bookId])
+                fileLocation
+                    ? [bookName, autherId[0].id, category, copiesRemaining, price, language, fileLocation, bookId]
+                    : [bookName, autherId[0].id, category, copiesRemaining, price, language, bookId]
+            )
         }
         else {
             console.log("no");
             const insertAutherQuery = 'INSERT INTO book_auther (name) values(?)'
             const result = await db.query(insertAutherQuery, [auther]);
-            // console.log(result.insertId);
             await db.query(updateBookQuery,
-                [bookName, result.insertId, category, copiesRemaining, price, language, bookId]);
+                fileLocation
+                    ? [bookName, result.insertId, category, copiesRemaining, price, language, fileLocation, bookId]
+                    : [bookName, result.insertId, category, copiesRemaining, price, language, bookId]
+
+            );
         }
 
         return true;
